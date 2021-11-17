@@ -14,7 +14,7 @@ from joblib import dump
 from google.cloud import storage
 from TaxiFareModel.dataa import upload_model_to_gcp
 
-STORAGE_LOCATION = 'models/simpletaxifare/filename.joblib'
+STORAGE_LOCATION = 'models/taxifare/filename.joblib'
 
 
 class Trainer():
