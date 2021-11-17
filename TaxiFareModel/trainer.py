@@ -11,6 +11,7 @@ from mlflow import mlflow
 from mlflow.tracking import MlflowClient
 from memoized_property import memoized_property
 from joblib import dump
+from TaxiFareModel.dataa import save_model
 
 
 
@@ -98,5 +99,5 @@ if __name__ == "__main__":
     model = Trainer(X_train, y_train)
     #model.set_pipeline()
     #model.run()
-    model.evaluate(X_test, y_test)
-    model.save_model()
+    reg = model.evaluate(X_test, y_test)
+    model.save_model(reg)

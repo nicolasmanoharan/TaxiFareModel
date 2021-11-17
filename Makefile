@@ -5,7 +5,7 @@
 LOCAL_PATH="/Users/manoharan/code/nicolasmanoharan/TaxiFareModel/raw_data/train_10k.csv"
 
 # bucket directory in which to store the uploaded file (`data` is an arbitrary name that we choose to use)
-BUCKET_FOLDER=data
+BUCKET_FOLDER=dataa
 
 # name for the uploaded file inside of the bucket (we choose not to rename the file that we upload)
 BUCKET_FILE_NAME=$(shell basename ${LOCAL_PATH})
