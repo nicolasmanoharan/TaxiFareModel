@@ -1,3 +1,39 @@
+#---------
+# load data
+#---------
+
+LOCAL_PATH="XXX"
+
+# bucket directory in which to store the uploaded file (`data` is an arbitrary name that we choose to use)
+BUCKET_FOLDER=data
+
+# name for the uploaded file inside of the bucket (we choose not to rename the file that we upload)
+BUCKET_FILE_NAME=$(shell basename ${LOCAL_PATH})
+
+upload_data:
+    # @gsutil cp train_1k.csv gs://wagon-ml-my-bucket-name/data/train_1k.csv
+    @gsutil cp ${LOCAL_PATH} gs://${BUCKET_NAME}/${BUCKET_FOLDER}/${BUCKET_FILE_NAME}
+
+
+
+#----------------------------
+# Set_projet / create_bucket
+#----------------------------
+# project id - replace with your GCP project id
+PROJECT_ID=wagon-bootcamp-328013
+
+# bucket name - replace with your GCP bucket name
+BUCKET_NAME=wagon-data-722-manoharan
+
+# choose your region from https://cloud.google.com/storage/docs/locations#available_locations
+REGION=europe-west1
+
+set_project:
+		@gcloud config set project ${PROJECT_ID}
+
+create_bucket:
+		@gsutil mb -l ${REGION} -p ${PROJECT_ID} gs://${BUCKET_NAME}
+
 # ----------------------------------
 #          INSTALL & TEST
 # ----------------------------------

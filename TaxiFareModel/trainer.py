@@ -3,13 +3,14 @@ from sklearn.pipeline import Pipeline
 from TaxiFareModel.utils import compute_rmse
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression,ElasticNet
 from TaxiFareModel.encoders import TimeFeaturesEncoder, DistanceTransformer
 from sklearn.model_selection import train_test_split
 from TaxiFareModel.dataa import get_data, clean_data
 from mlflow import mlflow
 from mlflow.tracking import MlflowClient
 from memoized_property import memoized_property
+from joblib import dump
 
 
 
@@ -23,6 +24,11 @@ class Trainer():
         self.X = X
         self.y = y
         self.experiment_name = "[FR] [Paris] [nicolasmanoharan] model name + version"
+    def save_model(self):
+        """ Save the trained model into a model.joblib file """
+        dump(self.pipe, 'filename.joblib')
+
+    pass
     def set_pipeline(self):
         '''returns a pipelined model'''
         dist_pipe = Pipeline([
@@ -37,16 +43,14 @@ class Trainer():
             ('distance', dist_pipe, ["pickup_latitude", "pickup_longitude", 'dropoff_latitude', 'dropoff_longitude']),
             ('time', time_pipe, ['pickup_datetime'])
         ], remainder="drop")
-        pipe = Pipeline([
-            ('preproc', preproc_pipe),
-            ('linear_model', LinearRegression())
-        ])
+        pipe = Pipeline([('preproc', preproc_pipe),
+                         ('linear_model', ElasticNet())])
         return pipe
 
     def run(self):
-        pipe = self.set_pipeline().fit(self.X, self.y)
-        self.mlflow_log_param("model","Liinear_model")
-        return pipe
+        self.pipe = self.set_pipeline().fit(self.X, self.y)
+        self.mlflow_log_param("model","Linear_model")
+        return self.pipe
 
 
 
@@ -86,6 +90,7 @@ class Trainer():
 
 if __name__ == "__main__":
     df = get_data()
+
     df = clean_data(df, test=False)
     y = df.fare_amount
     X = df.drop(columns="fare_amount")
@@ -94,3 +99,4 @@ if __name__ == "__main__":
     #model.set_pipeline()
     #model.run()
     model.evaluate(X_test, y_test)
+    model.save_model()
