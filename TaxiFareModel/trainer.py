@@ -11,8 +11,10 @@ from mlflow import mlflow
 from mlflow.tracking import MlflowClient
 from memoized_property import memoized_property
 from joblib import dump
-from TaxiFareModel.dataa import save_model
+from google.cloud import storage
+from TaxiFareModel.dataa import upload_model_to_gcp
 
+STORAGE_LOCATION = 'models/simpletaxifare/filename.joblib'
 
 
 class Trainer():
@@ -28,6 +30,12 @@ class Trainer():
     def save_model(self):
         """ Save the trained model into a model.joblib file """
         dump(self.pipe, 'filename.joblib')
+        # Implement here
+
+        upload_model_to_gcp()
+        print(
+            f"uploaded model.joblib to gcp cloud storage under \n => {STORAGE_LOCATION}"
+        )
 
     pass
     def set_pipeline(self):
@@ -91,7 +99,6 @@ class Trainer():
 
 if __name__ == "__main__":
     df = get_data()
-
     df = clean_data(df, test=False)
     y = df.fare_amount
     X = df.drop(columns="fare_amount")
@@ -99,5 +106,5 @@ if __name__ == "__main__":
     model = Trainer(X_train, y_train)
     #model.set_pipeline()
     #model.run()
-    reg = model.evaluate(X_test, y_test)
-    model.save_model(reg)
+    model.evaluate(X_test, y_test)
+    model.save_model()

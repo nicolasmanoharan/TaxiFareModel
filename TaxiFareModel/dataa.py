@@ -17,7 +17,7 @@ from google.cloud import storage
 # not required here
 
 ### GCP Storage - - - - - - - - - - - - - - - - - - - - - -
-STORAGE_LOCATION = 'models/simpletaxifare/model.joblib'
+STORAGE_LOCATION = 'models/simpletaxifare/filename.joblib'
 
 BUCKET_NAME = 'wagon-data-722-manoharan'
 
@@ -48,8 +48,19 @@ AWS_BUCKET_PATH = "s3://wagon-public-datasets/taxi-fare-train.csv"
 
 def get_data(nrows=10_000):
     '''returns a DataFrame with nrows from s3 bucket'''
-    pd.read_csv(f"gs://{BUCKET_NAME}/{BUCKET_TRAIN_DATA_PATH}", nrows=1000)
+    df = pd.read_csv(f"gs://{BUCKET_NAME}/{BUCKET_TRAIN_DATA_PATH}", nrows=1000)
     return df
+
+
+def upload_model_to_gcp():
+
+    client = storage.Client()
+
+    bucket = client.bucket(BUCKET_NAME)
+
+    blob = bucket.blob(STORAGE_LOCATION)
+
+    blob.upload_from_filename('filename.joblib')
 
 
 def save_model(reg):
@@ -58,13 +69,13 @@ def save_model(reg):
 
     # saving the trained model to disk is mandatory to then beeing able to upload it to storage
     # Implement here
-    joblib.dump(reg, 'model.joblib')
-    print("saved model.joblib locally")
+    joblib.dump(reg, 'filename.joblib')
+    print("saved filename.joblib locally")
 
     # Implement here
     upload_model_to_gcp()
     print(
-        f"uploaded model.joblib to gcp cloud storage under \n => {STORAGE_LOCATION}"
+        f"uploaded filename.joblib to gcp cloud storage under \n => {STORAGE_LOCATION}"
     )
 
 
@@ -76,7 +87,7 @@ def upload_model_to_gcp():
 
     blob = bucket.blob(STORAGE_LOCATION)
 
-    blob.upload_from_filename('model.joblib')
+    blob.upload_from_filename('filename.joblib')
 
 
 
@@ -102,13 +113,13 @@ def save_model(reg):
 
     # saving the trained model to disk is mandatory to then beeing able to upload it to storage
     # Implement here
-    joblib.dump(reg, 'model.joblib')
-    print("saved model.joblib locally")
+    joblib.dump(reg, 'filename.joblib')
+    print("saved filename.joblib locally")
 
     # Implement here
     upload_model_to_gcp()
     print(
-        f"uploaded model.joblib to gcp cloud storage under \n => {STORAGE_LOCATION}"
+        f"uploaded filename.joblib to gcp cloud storage under \n => {STORAGE_LOCATION}"
     )
 
 
